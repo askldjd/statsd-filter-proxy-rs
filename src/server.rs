@@ -1,5 +1,5 @@
 
-use std::{env, io, sync::Arc};
+use std::{io, sync::Arc};
 use tokio::time::{sleep, Duration};
 use tokio::{net::UdpSocket};
 
@@ -8,12 +8,12 @@ use crate::config::Config;
 
 pub async fn run_server(config: Config) -> io::Result<()> {
     let sock = UdpSocket::bind(
-        format!("{}:{}", config.listenHost, config.listenPort)
+        format!("{}:{}", config.listen_host, config.listen_port)
     ).await?;
     println!("Listening on: {}", sock.local_addr()?);
 
     let r = Arc::new(sock);
-    let blacklist = Arc::new(config.metricBlacklist);
+    let blacklist = Arc::new(config.metric_blocklist);
 
     let mut buf = [0; 4096];
     loop {

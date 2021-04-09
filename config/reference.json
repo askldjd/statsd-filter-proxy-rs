@@ -1,6 +1,6 @@
 {
-    "listenHost": "0.0.0.0",
-    "listenPort": 8125,
+    "listen_host": "0.0.0.0",
+    "listen_port": 8125,
 
     "metricBlacklist": [
         ".agent.directive",

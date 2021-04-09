@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-    pub listenHost: String,
-    pub listenPort: u16,
-    pub metricBlacklist: Vec<String>,
+    pub listen_host: String,
+    pub listen_port: u16,
+    pub metric_blocklist: Vec<String>,
 }
 
 pub fn parse_config() -> Config {
@@ -27,7 +27,7 @@ pub fn parse_config() -> Config {
     let config: Config =
         serde_json::from_str(&contents).expect("Unable to decode configuration file");
 
-    println!("{:?}", config.metricBlacklist);
+    println!("{:?}", config.metric_blocklist);
 
     config
 }
