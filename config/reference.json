@@ -1,0 +1,11 @@
+{
+    "listenHost": "0.0.0.0",
+    "listenPort": 8125,
+
+    "metricBlacklist": [
+        ".agent.directive",
+        ".agent.list",
+        ".agent.listfiltered",
+        ".agentblackoutwindowevent"
+    ]
+}

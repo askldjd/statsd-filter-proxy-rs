@@ -1,0 +1,13 @@
+[package]
+name = "datadog-filter-proxy-rs"
+version = "0.1.0"
+authors = ["askldjd"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+thread-id = { version = "4" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
