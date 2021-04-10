@@ -1,6 +1,6 @@
-use std::env;
-use std::fs;
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::Path;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -9,17 +9,7 @@ pub struct Config {
     pub metric_blocklist: Vec<String>,
 }
 
-pub fn parse_config() -> Config {
-    let mut current_path = env::current_exe().expect("Unable to get exe directory");
-    current_path.pop();
-
-    let config_path = format!(
-        "{}{}",
-        current_path.display(),
-        "/../../config/reference.json"
-    );
-    println!("loading configuration file {}", config_path);
-
+pub fn parse(config_path: &Path) -> Config {
     let contents = fs::read_to_string(config_path).expect("Unable to load configuration file");
 
     println!("{}", contents);
@@ -30,4 +20,47 @@ pub fn parse_config() -> Config {
     println!("{:?}", config.metric_blocklist);
 
     config
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    #[test]
+    fn test_parse_config() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("test/good_config.json");
+
+        let config = parse(d.as_path());
+
+        assert_eq!("0.0.0.0", config.listen_host);
+        assert_eq!(8125, config.listen_port);
+        assert_eq!(
+            &vec![
+                String::from("metrics1"),
+                String::from("metrics2"),
+                String::from("metrics3")
+            ],
+            &config.metric_blocklist
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Unable to decode configuration file")]
+    fn test_parse_config_bad_json() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("test/bad_config.json");
+
+        parse(d.as_path());
+    }
+
+    #[test]
+    #[should_panic(expected = "Unable to load configuration file")]
+    fn test_parse_config_missing_file() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("test/no_such_file.json");
+
+        parse(d.as_path());
+    }
 }

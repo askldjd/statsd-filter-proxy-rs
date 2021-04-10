@@ -1,15 +1,12 @@
-
 use std::{io, sync::Arc};
+use tokio::net::UdpSocket;
 use tokio::time::{sleep, Duration};
-use tokio::{net::UdpSocket};
 
-use crate::filter::should_be_blocked;
 use crate::config::Config;
+use crate::filter::should_be_blocked;
 
 pub async fn run_server(config: Config) -> io::Result<()> {
-    let sock = UdpSocket::bind(
-        format!("{}:{}", config.listen_host, config.listen_port)
-    ).await?;
+    let sock = UdpSocket::bind(format!("{}:{}", config.listen_host, config.listen_port)).await?;
     println!("Listening on: {}", sock.local_addr()?);
 
     let r = Arc::new(sock);
@@ -26,8 +23,12 @@ pub async fn run_server(config: Config) -> io::Result<()> {
         tokio::spawn(async move {
             sleep(Duration::from_millis(2000)).await;
             should_be_blocked(&shared_blacklist, &buf);
-            
-            println!("{:?} at {:p}", std::str::from_utf8(&buf[..len]).unwrap(), &buf);
+
+            println!(
+                "{:?} at {:p}",
+                std::str::from_utf8(&buf[..len]).unwrap(),
+                &buf
+            );
 
             let len = s.send_to(&buf[..len], &addr).await.unwrap();
             println!(
