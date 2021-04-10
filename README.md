@@ -4,7 +4,7 @@ statsd-filter-proxy-rs is efficient and lightweight StatsD proxy to filter unwan
 
 ## Why
 
-"If you don't want metrics, why not stop sending the metrics?" you might ask. Sometimes disabling metrics isn't trivial because of scale, legacy code and time. Sometimes the fastest way to disable a large number of metrics is to deploy a proxy to block unwanted metrics.
+"If you don't want metrics, why not stop sending the metrics?" you might ask. Sometimes disabling metrics isn't trivial because of scale, legacy code and time constraints. Sometimes the fastest way to disable a large number of metrics is to deploy a proxy to block unwanted metrics.
 
 ## Getting started
 
