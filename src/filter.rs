@@ -1,12 +1,9 @@
 use std::str;
 
 pub fn should_be_blocked(block_list: &Vec<String>, buf: &[u8]) -> bool {
-    // println!("{:?}", block_list);
-
     let statsd_str = unsafe { str::from_utf8_unchecked(&buf) };
 
     for prefix in block_list.iter() {
-        // println!("{}", prefix);
         if statsd_str.starts_with(prefix) {
             return true;
         }

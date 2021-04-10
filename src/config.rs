@@ -1,24 +1,25 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
+use log::{trace};
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub listen_host: String,
     pub listen_port: u16,
     pub metric_blocklist: Vec<String>,
-    pub multi_thread: Option<bool>
+    pub multi_thread: Option<bool>,
 }
 
 pub fn parse(config_path: &Path) -> Config {
     let contents = fs::read_to_string(config_path).expect("Unable to load configuration file");
 
-    println!("{}", contents);
+    trace!("{}", contents);
 
     let config: Config =
         serde_json::from_str(&contents).expect("Unable to decode configuration file");
 
-    println!("{:?}", config.metric_blocklist);
+    trace!("{:?}", config.metric_blocklist);
 
     config
 }
