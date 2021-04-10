@@ -18,7 +18,7 @@ To build the proxy, you need
 
 statsd-filter-proxy-rs takes in a JSON file as the configuration file. 
 
-```json
+```hjson
 {
     // The host to bind to
     "listen_host": "0.0.0.0",
