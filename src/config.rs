@@ -7,6 +7,7 @@ pub struct Config {
     pub listen_host: String,
     pub listen_port: u16,
     pub metric_blocklist: Vec<String>,
+    pub multi_thread: Option<bool>
 }
 
 pub fn parse(config_path: &Path) -> Config {
