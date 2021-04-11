@@ -68,6 +68,18 @@ statsd-filter-proxy-rs takes in a JSON file as the configuration file.
 }
 ```
 
+## Benchmark
+
+statsd-filter-proxy was [originally written](./benchmark/statsd-filter-proxy.js) in Node.js. So benchmark will use the original version as a baseline.
+
+| packet latency | JS  | Rust (single-threaded) | RS (multi-threaded) |
+|----------------|-----|------------------------|---------------------|
+| Median(us)     | 569 | 399                    | 499                 |
+| P95(us)        | 631 | 434                    | 547                 |
+
+The latency number should not be taken in absolute form because it doesn not account for benchmark overhead (in Python).
+
+
 ## Limitations / Known Issues
 - statsd-filter-proxy-rs does not support multiple StatsD message per UDP datagram. 
 - StatsD datagram are capped at 8192 bytes. This can be only be adjusted in code at the moment.
