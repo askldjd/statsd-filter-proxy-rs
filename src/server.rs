@@ -40,7 +40,7 @@ pub async fn run_server(config: Config) -> io::Result<()> {
             let target_addr_clone = target_addr.clone();
             let blocklist_clone = blocklist.clone();
             tokio::spawn(async move {
-                sleep(Duration::from_millis(2000)).await;
+                // sleep(Duration::from_millis(2000)).await;
 
                 if should_be_blocked(&blocklist_clone, &buf) == false {
                     trace!(
