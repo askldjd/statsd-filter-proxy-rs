@@ -17,6 +17,24 @@ To build the proxy, you need
     - Cargo
  - You can also get them from [rustup](https://rustup.rs/)
 
+## To Run
+
+```
+export PROXY_CONFIG_FILE=/path/to/your/proxy-config-file.json
+RUST_LOG=debug 
+cargo run --release
+```
+
+`PROXY_CONFIG_FILE` is a required variable to point to the configuration file
+
+`RUST_LOG` is an optional variable that defines the log level. They can be
+  - error
+  - warn
+  - info
+  - debug
+  - trace
+
+
 ## Configuration
 
 statsd-filter-proxy-rs takes in a JSON file as the configuration file. 
