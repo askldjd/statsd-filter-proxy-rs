@@ -1,5 +1,5 @@
 [package]
-name = "datadog-filter-proxy-rs"
+name = "statsd-filter-proxy-rs"
 version = "0.1.0"
 authors = ["askldjd"]
 edition = "2018"
