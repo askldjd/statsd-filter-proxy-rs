@@ -1,3 +1,8 @@
+// This is the original implementation of statsd-filter-proxy. It is a very
+// tiny nodejs program with decent performance characteristics. This version
+// is used as the performance baseline. If the Rust version is slower than 
+// Nodejs, then we are probably doing it wrong.
+
 const udp = require('dgram');
 const server = udp.createSocket('udp4');
 const client = udp.createSocket('udp4');

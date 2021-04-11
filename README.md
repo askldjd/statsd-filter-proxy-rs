@@ -21,7 +21,7 @@ To build the proxy, you need
 
 statsd-filter-proxy-rs takes in a JSON file as the configuration file. 
 
-```hjson
+```yaml
 {
     // The host to bind to
     "listen_host": "0.0.0.0",
@@ -41,5 +41,20 @@ statsd-filter-proxy-rs takes in a JSON file as the configuration file.
         "prefix2",
         "prefix3"
     ]
+
+    // Set to true to delegate to tokio threadpool for sending.
+    // If you turn this on, filtering and the sending of the datagram will
+    // be performed in background thread.
+    // Pros:
+    // - more scalable, especially if your filter list is large.
+    // Cons:
+    // - slightly more overhead performed per message (single digit microseconds)
+    // - message sent might not be the same order they are received, since
+    //   send path is concurrent
+    "multi_thread": true | false (optional, default=false)
 }
 ```
+
+## Limitations / Known Issues
+- does not support mulitple statsd message per UDP datagram
+- datagram at 8192 bytes
