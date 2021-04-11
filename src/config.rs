@@ -7,6 +7,8 @@ use log::{trace};
 pub struct Config {
     pub listen_host: String,
     pub listen_port: u16,
+    pub target_host: String,
+    pub target_port: u16,
     pub metric_blocklist: Vec<String>,
     pub multi_thread: Option<bool>,
 }
@@ -38,6 +40,8 @@ mod tests {
 
         assert_eq!("0.0.0.0", config.listen_host);
         assert_eq!(8125, config.listen_port);
+        assert_eq!("127.0.0.1", config.target_host);
+        assert_eq!(8126, config.target_port);
         assert_eq!(
             &vec![
                 String::from("metrics1"),

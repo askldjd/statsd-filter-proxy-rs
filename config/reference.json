@@ -1,7 +1,8 @@
 {
     "listen_host": "0.0.0.0",
     "listen_port": 8125,
-
+    "target_host": "127.0.0.1",
+    "target_port": 8126,
     "metric_blocklist": [
         ".agent.directive",
         ".agent.list",
