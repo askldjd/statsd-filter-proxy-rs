@@ -27,12 +27,7 @@ cargo run --release
 
 `PROXY_CONFIG_FILE` is a required variable to point to the configuration file
 
-`RUST_LOG` is an optional variable that defines the log level. They can be
-  - error
-  - warn
-  - info
-  - debug
-  - trace
+`RUST_LOG` is an optional variable that defines the log level. They can be `error`, `warn`, `info`, `debug` or `trace`.
 
 
 ## Configuration
@@ -74,5 +69,5 @@ statsd-filter-proxy-rs takes in a JSON file as the configuration file.
 ```
 
 ## Limitations / Known Issues
-- does not support mulitple statsd message per UDP datagram
-- datagram at 8192 bytes
+- statsd-filter-proxy-rs does not support multiple StatsD message per UDP datagram. 
+- StatsD datagram are capped at 8192 bytes. This can be only be adjusted in code at the moment.
