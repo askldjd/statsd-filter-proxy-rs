@@ -1,7 +1,6 @@
 use std::net::SocketAddr;
 use std::{io, sync::Arc};
 use tokio::net::UdpSocket;
-use tokio::time::{sleep, Duration};
 
 use crate::config::Config;
 use crate::filter::should_be_blocked;
@@ -16,10 +15,7 @@ pub async fn run_server(config: Config) -> io::Result<()> {
     let blocklist = Arc::new(config.metric_blocklist);
 
     let mut buf = [0; 8192];
-    let multi_thread = match config.multi_thread {
-        Some(p) => p,
-        None => false,
-    };
+    let multi_thread = config.multi_thread.unwrap_or(false);
 
     if multi_thread {
         trace!("multi_thread is enabled");
@@ -40,9 +36,7 @@ pub async fn run_server(config: Config) -> io::Result<()> {
             let target_addr_clone = target_addr.clone();
             let blocklist_clone = blocklist.clone();
             tokio::spawn(async move {
-                // sleep(Duration::from_millis(2000)).await;
-
-                if should_be_blocked(&blocklist_clone, &buf) == false {
+                if !should_be_blocked(&blocklist_clone, &buf) {
                     trace!(
                         "{:?} at {:p}",
                         std::str::from_utf8(&buf[..len]).unwrap(),
@@ -63,7 +57,7 @@ pub async fn run_server(config: Config) -> io::Result<()> {
                 }
             });
         } else {
-            if should_be_blocked(&blocklist, &buf) == false {
+            if !should_be_blocked(&blocklist, &buf) {
                 trace!(
                     "{:?} at {:p}",
                     std::str::from_utf8(&buf[..len]).unwrap(),
