@@ -74,11 +74,12 @@ statsd-filter-proxy was [originally written](./benchmark/statsd-filter-proxy.js)
 
 | packet latency | JS  | Rust (single-threaded) | RS (multi-threaded) |
 |----------------|-----|------------------------|---------------------|
-| Median(us)     | 569 | 399                    | 499                 |
-| P95(us)        | 631 | 434                    | 547                 |
+| Median(us)     | 639 | 399                    | 499                 |
+| P95(us)        | 853 | 434                    | 547                 |
 
 The latency number should not be taken in absolute form because it doesn not account for benchmark overhead (in Python).
 
+CPU = Intel i7-8700K (12) @ 4.700GHz
 
 ## Limitations / Known Issues
 - statsd-filter-proxy-rs does not support multiple StatsD message per UDP datagram. 
