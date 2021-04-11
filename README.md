@@ -3,7 +3,7 @@
 
 # statsd-filter-proxy-rs
 
-statsd-filter-proxy-rs is efficient and lightweight StatsD proxy to filter unwanted metrics to StatsD server.
+statsd-filter-proxy-rs is efficient and lightweight StatsD proxy to filter out unwanted metrics to StatsD server.
 
 ## Why
 
@@ -15,7 +15,7 @@ To build the proxy, you need
  - The rust toolset
     - Rust 1.51+
     - Cargo
- - You can also get it from [rustup](https://rustup.rs/)
+ - You can also get them from [rustup](https://rustup.rs/)
 
 ## Configuration
 
