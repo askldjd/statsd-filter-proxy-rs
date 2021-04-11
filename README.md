@@ -1,3 +1,6 @@
+![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
+![Continuous integration](https://github.com/askldjd/statsd-filter-proxy-rs/workflows/CI/badge.svg)
+
 # statsd-filter-proxy-rs
 
 statsd-filter-proxy-rs is efficient and lightweight StatsD proxy to filter unwanted metrics to StatsD server.
