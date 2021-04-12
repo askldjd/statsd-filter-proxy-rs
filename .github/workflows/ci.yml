@@ -11,13 +11,16 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - name: build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features
       - name: unit test
         uses: actions-rs/cargo@v1
         with:
           command: test
           args: test
-      - name: build
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --all-features
+      - name: integration test
+        run: |
+          python test/integration_test.py

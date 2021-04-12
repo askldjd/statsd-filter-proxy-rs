@@ -2,8 +2,14 @@ from threading import Thread
 import socket
 import sys
 from time import sleep
+import os
+import subprocess
+import signal
+import tempfile
+
 
 TEST_MSG_COUNT = 1000
+
 
 class Sender(Thread):
     def run(self):
@@ -35,8 +41,7 @@ class Receiver(Thread):
         UDP_IP = "127.0.0.1"
         UDP_PORT = 8126
 
-        sock = socket.socket(socket.AF_INET,  # Internet
-                             socket.SOCK_DGRAM)  # UDP
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind((UDP_IP, UDP_PORT))
 
         received_data = set()
@@ -52,20 +57,49 @@ class Receiver(Thread):
                 print(f"received {TEST_MSG_COUNT} message, exiting")
                 break
 
+def setup_proxy():
+    tmp_config =  tempfile.NamedTemporaryFile(mode='w', delete=False)
+    print(tmp_config.name)
+    tmp_config.write('''
+{
+    "listen_host": "0.0.0.0",
+    "listen_port": 8125,
+    "target_host": "127.0.0.1",
+    "target_port": 8126,
+    "metric_blocklist": [
+        "foo"
+    ]
+}'''
+    )
+
+    my_env = os.environ.copy()
+    my_env["PROXY_CONFIG_FILE"] = f"{tmp_config.name}"
+    proxy_proc = subprocess.Popen("cargo run --release", shell=True, env=my_env)
+    return proxy_proc
 
 def main():
+    proxy_proc = setup_proxy()
+    sleep(5)
+
     receiver = Receiver()
     sender = Sender()
-    
+
     receiver.start()
     print("started receiver thread, waiting 5s")
     sleep(5)
     sender.start()
     print("started sender thread, testing in progress")
 
-    receiver.join()
     sender.join()
-    print("test completed")
+    receiver.join(2)
+
+    proxy_proc.kill()
+
+    if receiver.is_alive():
+        print("test failed, receiver never received all the messages")
+        os.kill(os.getpid(), signal.SIGUSR1)
+    else:
+        print("test passed")
 
 
 if __name__ == '__main__':
