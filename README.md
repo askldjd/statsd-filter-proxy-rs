@@ -3,7 +3,7 @@
 
 # statsd-filter-proxy-rs
 
-statsd-filter-proxy-rs is efficient and lightweight StatsD proxy to filter out unwanted metrics to StatsD server.
+statsd-filter-proxy-rs is efficient and lightweight StatsD proxy that filters out unwanted metrics to a StatsD server.
 
 ## Why
 
@@ -25,9 +25,9 @@ RUST_LOG=debug
 cargo run --release
 ```
 
-`PROXY_CONFIG_FILE` is a required variable to point to the configuration file
+`PROXY_CONFIG_FILE` is a _required_ variable that points to the configuration file path.
 
-`RUST_LOG` is an optional variable that defines the log level. They can be `error`, `warn`, `info`, `debug` or `trace`.
+`RUST_LOG` is an _optional_ variable that defines the log level. They can be `error`, `warn`, `info`, `debug` or `trace`.
 
 
 ## Configuration
@@ -55,17 +55,36 @@ statsd-filter-proxy-rs takes in a JSON file as the configuration file.
         "prefix3"
     ]
 
-    // Set to true to delegate to tokio threadpool for sending.
-    // If you turn this on, filtering and the sending of the datagram will
-    // be performed in background thread.
+    // Set to true to delegate the send path to the tokio threadpool.
+    // If you turn this on, filtering and the sending of the datagram may
+    // be performed in Tokio background threads.
+    //
     // Pros:
-    // - more scalable, especially if your filter list is large.
+    // - scalable to more than 1 CPU, especially useful if your filter list 
+    //   large enough to become a bottleneck.
     // Cons:
-    // - slightly more overhead performed per message (single digit microseconds)
+    // - slightly more overhead performed per message
+    //   - an extra deep copy of the send buffer
+    //   - Arc increments for sharing objects among threads
+    //
     // - message sent might not be the same order they are received, since
     //   send path is concurrent
     "multi_thread": true | false (optional, default=false)
 }
+```
+
+## Tests
+
+### Unit Test
+
+```
+cargo run test
+```
+
+### Integration Test
+
+```
+python test/integration_test.py
 ```
 
 ## Benchmark
