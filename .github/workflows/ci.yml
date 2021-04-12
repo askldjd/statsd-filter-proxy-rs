@@ -21,3 +21,6 @@ jobs:
         with:
           command: test
           args: test
+      - name: integration test
+        run: |
+          python test/integration_test.py
