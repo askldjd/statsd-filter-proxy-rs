@@ -46,15 +46,27 @@ class Receiver(Thread):
 
         received_data = set()
 
+        # since we are blocking off all message with prefix = 88, message 88 and
+        # 88X will be blocked.
+        EXPECTED_MSG_COUNT = TEST_MSG_COUNT - 11
+
         while True:
-            data, addr = sock.recvfrom(8192)
+            data, _ = sock.recvfrom(8192)            
+
+            if data.decode("utf-8").startswith('88'):
+                print('test failed, messages start with 88 should be blocked')
+                # block forever to force the main thread to timeout the 
+                # thread.join(). This hack will allow us to follow the normal
+                # test failure path.
+                sleep(9999)
+            
             received_data.add(data)
 
             if len(received_data) % 100 == 0:
                 print(f"received {len(received_data)} messages")
 
-            if len(received_data) >= TEST_MSG_COUNT:
-                print(f"received {TEST_MSG_COUNT} message, exiting")
+            if len(received_data) >= EXPECTED_MSG_COUNT:
+                print(f"received {EXPECTED_MSG_COUNT} message, exiting")
                 break
 
 def setup_proxy():
@@ -67,7 +79,7 @@ def setup_proxy():
     "target_host": "127.0.0.1",
     "target_port": 8126,
     "metric_blocklist": [
-        "foo"
+        "88"
     ]
 }'''
     )
@@ -78,6 +90,11 @@ def setup_proxy():
     return proxy_proc
 
 def main():
+    # The test scenario is as follow
+    # Sender -> Proxy -> Receiver
+    # Sender will send 1000 messages to Receiver and some of them will be discarded
+    # by the proxy. Receiver will only exit properly if it has all the messages.
+    #
     proxy_proc = setup_proxy()
     sleep(5)
 
