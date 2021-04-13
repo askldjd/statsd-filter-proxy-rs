@@ -101,5 +101,4 @@ The latency number should not be taken in absolute form because it doesn not acc
 CPU = Intel i7-8700K (12) @ 4.700GHz
 
 ## Limitations / Known Issues
-- statsd-filter-proxy-rs does not support multiple StatsD message per UDP datagram. 
 - StatsD datagram are capped at 8192 bytes. This can be only be adjusted in code at the moment.

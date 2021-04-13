@@ -3,9 +3,9 @@ use std::{io, sync::Arc};
 use tokio::net::UdpSocket;
 
 use crate::config::Config;
-use crate::filter::should_be_blocked;
+use crate::filter::filter;
 
-use log::{info, trace};
+use log::{debug, info, log_enabled, trace, Level};
 
 pub async fn run_server(config: Config) -> io::Result<()> {
     let sock = UdpSocket::bind(format!("{}:{}", config.listen_host, config.listen_port)).await?;
@@ -29,26 +29,29 @@ pub async fn run_server(config: Config) -> io::Result<()> {
 
     loop {
         let (len, addr) = sock.recv_from(&mut buf).await?;
-        trace!("{:?} bytes received from {:?} onto {:p}", len, addr, &buf);
+        debug!("{:?} bytes received from {:?} onto {:p}", len, addr, &buf);
+
+        if log_enabled!(Level::Trace) {
+            trace!(
+                "{:?} at {:p}",
+                std::str::from_utf8(&buf[..len]).unwrap(),
+                &buf
+            );
+        }
 
         if multi_thread {
             let sock_clone = sock.clone();
             let target_addr_clone = target_addr.clone();
             let blocklist_clone = blocklist.clone();
             tokio::spawn(async move {
-                if !should_be_blocked(&blocklist_clone, &buf) {
-                    trace!(
-                        "{:?} at {:p}",
-                        std::str::from_utf8(&buf[..len]).unwrap(),
-                        &buf
-                    );
-
+                let filtered_string = filter(&blocklist_clone, &buf[..len]);
+                if filtered_string.len() > 0 {
                     let len = sock_clone
-                        .send_to(&buf[..len], &*target_addr_clone)
+                        .send_to(filtered_string.as_bytes(), &*target_addr_clone)
                         .await
                         .unwrap();
 
-                    trace!(
+                    debug!(
                         "Thread {}, Echoed {} bytes to {}",
                         thread_id::get(),
                         len,
@@ -57,15 +60,13 @@ pub async fn run_server(config: Config) -> io::Result<()> {
                 }
             });
         } else {
-            if !should_be_blocked(&blocklist, &buf) {
-                trace!(
-                    "{:?} at {:p}",
-                    std::str::from_utf8(&buf[..len]).unwrap(),
-                    &buf
-                );
-
-                let len = sock.send_to(&buf[..len], &*target_addr).await.unwrap();
-                trace!(
+            let filtered_string = filter(&blocklist, &buf[..len]);
+            if filtered_string.len() > 0 {
+                let len = sock
+                    .send_to(filtered_string.as_bytes(), &*target_addr)
+                    .await
+                    .unwrap();
+                debug!(
                     "Thread {}, Echoed {} bytes to {}",
                     thread_id::get(),
                     len,
