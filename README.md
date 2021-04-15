@@ -1,5 +1,6 @@
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Continuous integration](https://github.com/askldjd/statsd-filter-proxy-rs/workflows/CI/badge.svg)
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/askldjd/statsd-filter-proxy-rs)
 
 # statsd-filter-proxy-rs
 
@@ -28,6 +29,32 @@ cargo run --release
 `PROXY_CONFIG_FILE` is a _required_ variable that points to the configuration file path.
 
 `RUST_LOG` is an _optional_ variable that defines the log level. They can be `error`, `warn`, `info`, `debug` or `trace`.
+
+## Docker
+
+Make a JSON configuration file locally. This sample configuration below would make the filter proxy listen on port 8125, and forward datagrams to port 8127.
+```json
+{
+    "listen_host": "0.0.0.0",
+    "listen_port": 8125,
+    "target_host": "127.0.0.1",
+    "target_port": 8127,
+    "metric_blocklist": [
+        "foo1",
+        "foo2",
+    ]
+}
+```
+
+Now run the proxy with the configuration mounted through Docker volume.
+```bash
+docker run -it \
+    --volume $(pwd)/config.json:/app/config.json:Z \
+    -e PROXY_CONFIG_FILE=/app/config.json \
+    -e RUST_LOG=trace \
+    -p 8125:8125/udp \
+    askldjd/statsd-filter-proxy-rs:latest
+```
 
 
 ## Configuration
