@@ -18,7 +18,7 @@ To build the proxy, you need
     - Cargo
  - You can also get them from [rustup](https://rustup.rs/)
 
-## To Run
+## Compile and Run Locally
 
 ```
 export PROXY_CONFIG_FILE=/path/to/your/proxy-config-file.json
@@ -30,7 +30,7 @@ cargo run --release
 
 `RUST_LOG` is an _optional_ variable that defines the log level. They can be `error`, `warn`, `info`, `debug` or `trace`.
 
-## Docker
+## Run Locally Through Docker
 
 Make a JSON configuration file locally. This sample configuration below would make the filter proxy listen on port 8125, and forward datagrams to port 8127.
 ```json
