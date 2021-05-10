@@ -14,7 +14,8 @@ const config = {
     port: 8126,
   },
   metricBlocklist: [
-    "foo"
+    "foo1",
+    "foo2"
   ]
 }
 
@@ -27,17 +28,19 @@ function blacklistMetric(metric) {
   return false;
 }
 
-server.on('message', (msg) => {
-  if (blacklistMetric(msg)) {
-    return;
-  }
-
-  client.send(msg, config.forward.port, config.forward.host, (error) => {
-    if (error) {
-      console.log(`Unable to forward datagram to ${config.forward}, ${error}`);
-      process.exit(-1);
+server.on('message', (pkt) => {
+  for (const msg of pkt.toString().split("\n")) {  
+    if (blacklistMetric(msg)) {
+      continue;
     }
-  });
+
+    client.send(msg, config.forward.port, config.forward.host, (error) => {
+      if (error) {
+        console.log(`Unable to forward datagram to ${config.forward}, ${error}`);
+        process.exit(-1);
+      }
+    });
+  }
 });
 
 server.on('listening', () => {

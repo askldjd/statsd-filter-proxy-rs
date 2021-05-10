@@ -15,7 +15,8 @@ class Sender(Thread):
             num_send = 0
 
             while True:
-                message = f'{time()}'
+                # message = f'foo1:{time()}|c\nfoo2:{time()}|c\nfoo3:{time()}|c'
+                message = f'foo0:{time()}|h\nfoo1:12345|c\nfoo2:1234567890|c'
                 sock.sendto(str.encode(message), server_address)
                 num_send += 1
 
@@ -46,7 +47,7 @@ class Receiver(Thread):
         while True:
             data, addr = sock.recvfrom(8192)
             now = time()
-            then = float(data)
+            then = float(data[5:-2])
             took = now - then
 
             latencies.append(took)
@@ -66,7 +67,7 @@ class Receiver(Thread):
 def main():
     receiver = Receiver()
     sender = Sender()
-    
+
     receiver.start()
     print("started receiver thread, waiting 5s")
     sleep(5)
