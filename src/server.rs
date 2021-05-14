@@ -44,8 +44,9 @@ pub async fn run_server(config: Config) -> io::Result<()> {
             let target_addr_clone = target_addr.clone();
             let blocklist_clone = blocklist.clone();
             tokio::spawn(async move {
-                let filtered_string = filter(&blocklist_clone, &buf[..len]);
-                if filtered_string.len() > 0 {
+                let filtered_string_parts = filter(&blocklist_clone, &buf[..len]);
+                if !filtered_string_parts.is_empty() {
+                    let filtered_string = filtered_string_parts.join("\n");
                     let len = sock_clone
                         .send_to(filtered_string.as_bytes(), &*target_addr_clone)
                         .await
@@ -60,8 +61,9 @@ pub async fn run_server(config: Config) -> io::Result<()> {
                 }
             });
         } else {
-            let filtered_string = filter(&blocklist, &buf[..len]);
-            if filtered_string.len() > 0 {
+            let filtered_string_parts = filter(&blocklist, &buf[..len]);
+            if !filtered_string_parts.is_empty() {
+                let filtered_string = filtered_string_parts.join("\n");
                 let len = sock
                     .send_to(filtered_string.as_bytes(), &*target_addr)
                     .await
