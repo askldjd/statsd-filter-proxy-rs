@@ -4,12 +4,7 @@ pub fn filter(block_list: &Vec<String>, buf: &[u8]) -> String {
     let statsd_str = unsafe { str::from_utf8_unchecked(&buf) };
 
     let result_itr = statsd_str.split("\n").filter(|line| {
-        for prefix in block_list.iter() {
-            if line.starts_with(prefix) {
-                return false;
-            }
-        }
-        return true;
+        !block_list.iter().any(|prefix| line.starts_with(prefix))
     });
 
     let result = result_itr.collect::<Vec<&str>>().join("\n");
